@@ -2,7 +2,7 @@
 
 ## Description
 
-Azure Sql Tools just a fun experiment to get a PowerShell module to consume native Sql files and load dynamic parameters for the required values in the query.
+Azure Sql Tools is just a fun experiment to get a PowerShell module to consume native Sql files and load dynamic parameters for the required values in the query.
 It also has all the convenience features from Azure PowerShell like tab completion on Azure resources. Lastly, I wanted to use single sign-on to access the data which makes this tool pretty nifty.
 
 ## Requirements
