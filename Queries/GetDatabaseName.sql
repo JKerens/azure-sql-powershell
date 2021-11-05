@@ -1,0 +1,1 @@
+SELECT DB_NAME() AS DatabaseName;

@@ -22,6 +22,7 @@ function Invoke-AzureSqlCmd {
             })]
         [string]$Server,
 
+        [Parameter(Mandatory)]
         [ArgumentCompleter( {
                 param(
                     $commandName,
@@ -38,7 +39,7 @@ function Invoke-AzureSqlCmd {
                     $matchingDbs = $matchingDbs | Where-Object { $_.ParentResource -eq "servers/$($fakeBoundParameters["Server"])" }
                 }
                 return ($matchingDbs.Name -split '/')[1]
-            } )]
+            })]
         [string]$Database,
 
         [Parameter(Mandatory)]
@@ -69,11 +70,19 @@ function Invoke-AzureSqlCmd {
     }
     # think of begin as your constructor or init method
     begin {
-
         # retrieves the query file
         $queryFile = _getQueries | Where-Object { $_.Name -eq $QueryName }
         $accessToken = (Get-AzAccessToken -ResourceUrl "https://database.windows.net").Token  
-        
+
+        # only adds the variable argument to the splat if there are arguments
+        if ($null -ne $paramDictionary.Values) {
+            [string[]]$queryParametersValues = $paramDictionary.Values | ForEach-Object { "$($_.Name)=$($_.Value)" }
+            $invokeSqlCmdParams.Add("Variable", $queryParametersValues)
+        }
+        $results = @()
+    }
+    # process is where the looping work is done
+    process {
         $invokeSqlCmdParams = @{
             ServerInstance = "$Server.database.windows.net"
             Database       = $Database
@@ -81,19 +90,11 @@ function Invoke-AzureSqlCmd {
             AccessToken    = $accessToken
         }
 
-        # only adds the variable argument to the splat if there are arguments
-        if ($null -ne $paramDictionary.Values) {
-            [string[]]$queryParametersValues = $paramDictionary.Values | ForEach-Object { "$($_.Name)=$($_.Value)" }
-            $invokeSqlCmdParams.Add("Variable", $queryParametersValues)
-        }
-    }
-    # process is where the looping work is done
-    process {
-        $result = Invoke-Sqlcmd @invokeSqlCmdParams 
+        $results += Invoke-Sqlcmd @invokeSqlCmdParams 
     }
     # end is where you return or write csv files etc
     end {
-        return $result
+        return $results
     } 
 }
 

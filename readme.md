@@ -2,8 +2,8 @@
 
 ## Description
 
-Azure Sql Tools is just a fun experiment to get a PowerShell module to consume native Sql files and load dynamic parameters for the required values in the query.
-It also has all the convenience features from Azure PowerShell like tab completion on Azure resources. Lastly, I wanted to use single sign-on to access the data which makes this tool pretty nifty.
+Azure SQL Tools is just a fun experiment to get a PowerShell module to consume native SQL files and load dynamic parameters for the required values in the query.
+It also has all the convenience features from Azure PowerShell, like tab completion on Azure resources. Lastly, I wanted to use single sign-on to access the data making this tool pretty nifty.
 
 ## Requirements
 
@@ -59,7 +59,7 @@ Get-Module
 
 - Just set variables via $result or any term you want
 - You can then manipulate the object as you please
-  - Note that tab completion work on table column names 
+  - Note that tab completion work on table column names
 
 ```powershell
 $result = Invoke-AzureSqlCmd -Server jameskdemo -Database HelloPowerShell -QueryName GetTable.sql -tableName "BuildVersion"
