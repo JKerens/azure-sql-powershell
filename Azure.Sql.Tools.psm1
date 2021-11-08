@@ -73,12 +73,7 @@ function Invoke-AzureSqlCmd {
         # retrieves the query file
         $queryFile = _getQueries | Where-Object { $_.Name -eq $QueryName }
         $accessToken = (Get-AzAccessToken -ResourceUrl "https://database.windows.net").Token  
-
-        # only adds the variable argument to the splat if there are arguments
-        if ($null -ne $paramDictionary.Values) {
-            [string[]]$queryParametersValues = $paramDictionary.Values | ForEach-Object { "$($_.Name)=$($_.Value)" }
-            $invokeSqlCmdParams.Add("Variable", $queryParametersValues)
-        }
+      
         $results = @()
     }
     # process is where the looping work is done
@@ -88,6 +83,12 @@ function Invoke-AzureSqlCmd {
             Database       = $Database
             InputFile      = $queryFile
             AccessToken    = $accessToken
+        }
+        
+        # only adds the variable argument to the splat if there are arguments
+        if ($null -ne $paramDictionary.Values) {
+            [string[]]$queryParametersValues = $paramDictionary.Values | ForEach-Object { "$($_.Name)=$($_.Value)" }
+            $invokeSqlCmdParams.Add("Variable", $queryParametersValues)
         }
 
         $results += Invoke-Sqlcmd @invokeSqlCmdParams 
